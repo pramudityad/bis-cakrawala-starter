@@ -24,9 +24,9 @@ python bootstrap.py
 ```
 
 Kalau berhasil, kamu dapat satu baris `OK | python ... | duckdb ...`.
-**Paste baris itu ke thread LMS.**
+**Paste baris itu ke thread RISE.**
 
-Kalau gagal, skrip mencetak pesan error lengkap. **Salin seluruh pesan itu ke thread LMS.**
+Kalau gagal, skrip mencetak pesan error lengkap. **Salin seluruh pesan itu ke thread RISE.**
 Dibereskan di 5 menit pertama lab Sesi 3 — jangan panik, jangan begadang.
 
 > Windows: saat install Python dari python.org, **centang "Add Python to PATH"**.

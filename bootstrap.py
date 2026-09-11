@@ -7,10 +7,9 @@ Jalankan sekali sebelum Sesi 3:
 
 Skrip ini hanya memakai pustaka bawaan Python, jadi ia bisa jalan sebelum
 apa pun terpasang. Kalau ada yang gagal, pesan errornya ditulis dalam bahasa
-yang bisa kamu salin langsung ke thread LMS.
+yang bisa kamu salin langsung ke thread RISE.
 """
 
-import os
 import platform
 import shutil
 import subprocess
@@ -92,7 +91,7 @@ def install_requirements():
     if proc.returncode != 0:
         tail = (proc.stderr or proc.stdout).strip().splitlines()[-12:]
         raise SetupError(
-            "pip install gagal. Salin blok di bawah ke thread LMS:\n"
+            "pip install gagal. Salin blok di bawah ke thread RISE:\n"
             + "\n".join("    " + line for line in tail)
         )
     return "Dependensi terpasang"
@@ -138,7 +137,7 @@ def smoke_test():
 
 
 def ok_line():
-    """Baris yang dipaste ke LMS. Menunjukkan setup jalan, tanpa data pribadi."""
+    """Baris yang dipaste ke RISE. Menunjukkan setup jalan, tanpa data pribadi."""
     import duckdb  # noqa: E402
 
     return (
@@ -222,7 +221,7 @@ def main():
             say("=" * 60)
             say(str(exc))
             say()
-            say("Balas di thread LMS dengan seluruh teks di atas.")
+            say("Balas di thread RISE dengan seluruh teks di atas.")
             say("Dibereskan di 5 menit pertama lab Sesi 3 — jangan panik.")
             return 1
 
@@ -231,7 +230,7 @@ def main():
     say("SETUP SELESAI")
     say("=" * 60)
     say()
-    say("Salin baris ini ke thread LMS:")
+    say("Salin baris ini ke thread RISE:")
     say()
     say("    " + ok_line())
     say()
