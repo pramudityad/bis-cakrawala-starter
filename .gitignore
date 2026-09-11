@@ -1,0 +1,19 @@
+# Warehouse hasil kerja — dibangun ulang dari CSV, jangan di-commit.
+warehouse/*.duckdb
+warehouse/*.duckdb.wal
+warehouse/_smoke.duckdb
+# Kecuali fallback dari dosen:
+!warehouse/fallback/*.duckdb
+
+# Dashboard hasil build TIDAK masuk sini — docs/D9/dashboard.html WAJIB di-commit,
+# karena itulah artefak yang dinilai.
+
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+.DS_Store
+.ipynb_checkpoints/
+_update.zip
+_update_tmp/
