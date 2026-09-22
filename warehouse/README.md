@@ -1,5 +1,9 @@
 # warehouse/
 
-Database kerjamu (`*.duckdb`) TIDAK di-commit — dibangun ulang dari CSV oleh pipeline.
-`fallback/` berisi database jadi dari dosen: pakai kalau pipeline-mu jebol, supaya kamu
-tetap bisa lanjut ke sesi berikutnya.
+Hasil kerja, bukan sumber. Berkas `.duckdb` **tidak** di-commit (lihat `.gitignore`).
+
+```
+python -m pipeline.load --topic t2 --slice k8            # → warehouse/t2_k8.duckdb
+python -m pipeline.load --topic t2 --slice k8 --twice    # bukti idempoten
+python -m pipeline.load --topic t2 --slice k8 --fallback # → warehouse/fallback/t2.duckdb (jalur penyelamat)
+```

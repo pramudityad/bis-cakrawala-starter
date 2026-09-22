@@ -1,7 +1,13 @@
-# data/raw/
+# data/raw/ — seed (jangan diubah)
 
-Data benih dari dosen. **Jangan diubah** — pipeline-mu harus bisa jalan dari berkas asli.
+Diisi dosen, dibaca saja. Salin dari folder seed kelas:
 
-- `t1_kampus/`  — T1 Kampus: Presensi & Kelulusan (K4, K5, K7)
-- `t2_umkm/`    — T2 POS UMKM multi-outlet (K8, K9)
-- `t3_publik/`  — T3 Kemiskinan BPS × APBD (K1, K2, K3, K6) — lihat `SOURCE.md`
+```bash
+cp -R <seed-kelas>/t1_kampus  data/raw/
+cp -R <seed-kelas>/t2_umkm    data/raw/
+cp -R <seed-kelas>/t3_publik  data/raw/
+```
+
+T3 hanya butuh foldernya sendiri (tiap slice ada di dalam `t3_publik/<kode-tim>/`), dan setiap
+folder T3 menyertakan `SOURCE.md` — sumber, tanggal snapshot, jumlah baris. Itu syarat data publik:
+tanpa SOURCE.md, angkanya tidak bisa diperiksa siapa pun.
