@@ -18,3 +18,9 @@ venv/
 
 # kunci jawaban dosen — jangan pernah ikut ke repo mahasiswa
 _KUNCI_PENYUNTIKAN.md
+
+# catatan kerja (ticket ledger), bukan artefak mahasiswa
+.scratch/
+
+# catatan load (bukti idempotensi) — artefak mesin
+*.load.json

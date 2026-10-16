@@ -58,7 +58,23 @@ TOPICS = {
         "fact": "fact_prakiraan_cuaca",
         "grain": "Satu baris = satu desa pada satu slot prakiraan.",
     },
+    # T4 dipakai Sesi 12–15 (satu proyek, satu pertanyaan). SENGAJA tidak punya `slices`:
+    # seluruh kelas memakai satu dataset penuh, jadi `--slice` tidak dipakai dan warehouse-nya
+    # `warehouse/t4.duckdb` (bukan `t4_<slice>.duckdb`).
+    "t4": {
+        "label": "T4 Ritel Omnichannel — STORE/WEB/APP/MARKETPLACE",
+        "dir": "t4_omni",
+        "files": ["stores.csv", "products.csv", "customers.csv", "orders.csv",
+                  "order_items.csv", "returns.csv", "targets.csv", "marketing_spend.csv"],
+        "fact": "fact_order_line",
+        "grain": "Satu baris di fact_order_line berarti satu produk terjual per pesanan per waktu pesanan.",
+    },
 }
+
+
+def punya_slice(topic: str) -> bool:
+    """Topik dengan `--slice` (T1–T3) vs topik satu-dataset (T4)."""
+    return bool(TOPICS[topic].get("slices"))
 
 
 def topic_dir(topic: str) -> str:
@@ -66,9 +82,15 @@ def topic_dir(topic: str) -> str:
     return os.path.join(DATA, TOPICS[topic]["dir"])
 
 
-def resolve(topic: str, slice_id: str) -> dict:
+def resolve(topic: str, slice_id: str = None) -> dict:
+    """Topik + slice → folder seed. Topik tanpa slice (T4) menerima `slice_id=None`."""
     cfg = TOPICS[topic]
-    if topic == "t3":
+    if not punya_slice(topic):
+        if slice_id:
+            raise SystemExit(f"Topik {topic} tidak punya slice; jalankan tanpa --slice.")
+        directory = topic_dir(topic)
+        label = cfg["label"]
+    elif topic == "t3":
         directory = os.path.join(topic_dir(topic), slice_id)
         label = cfg["slices"][slice_id]["label"]
     else:
@@ -79,6 +101,12 @@ def resolve(topic: str, slice_id: str) -> dict:
     return {"topic": topic, "slice": slice_id, "dir": directory, "label": label, "cfg": cfg}
 
 
-def db_path(topic: str, slice_id: str) -> str:
+def db_path(topic: str, slice_id: str = None) -> str:
     os.makedirs(WAREHOUSE, exist_ok=True)
-    return os.path.join(WAREHOUSE, f"{topic}_{slice_id}.duckdb")
+    nama = f"{topic}_{slice_id}" if slice_id else topic
+    return os.path.join(WAREHOUSE, f"{nama}.duckdb")
+
+
+def slice_ids(topic: str) -> list[str]:
+    """Daftar slice topik; topik satu-dataset mengembalikan [] (bukan satu slice palsu)."""
+    return sorted(TOPICS[topic].get("slices", {}))

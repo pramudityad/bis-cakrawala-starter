@@ -1,0 +1,25 @@
+store_id,nama,kota,wilayah,tipe,aktif
+STR-01,Gerai Bekasi 1,Jakarta Selatan,Jabodetabek,Reguler,YA
+STR-02,Gerai Cirebon 2,Sukabumi,Jawa Barat,Express,YA
+STR-03,Gerai Solo 3,Solo,Jawa Tengah-DIY,Express,YA
+STR-04,Gerai Malang 4,Gresik,Jawa Timur,Community,YA
+STR-05,Gerai Padang 5,Pekanbaru,Sumatera,Community,YA
+STR-06,Gerai Balikpapan 6,Denpasar,Indonesia Timur,Flagship,YA
+STR-07,Gerai Tangerang 7,Depok,Jabodetabek,Flagship,YA
+STR-08,Gerai Sukabumi 8,Sukabumi,Jawa Barat,Community,YA
+STR-09,Gerai Solo 9,Solo,Jawa Tengah-DIY,Community,YA
+STR-10,Gerai Gresik 10,Malang,Jawa Timur,Flagship,YA
+STR-11,Gerai Padang 11,Palembang,Sumatera,Flagship,YA
+STR-12,Gerai Manado 12,Makassar,Indonesia Timur,Flagship,YA
+STR-13,Gerai Jakarta Pusat 13,Depok,Jabodetabek,Express,YA
+STR-14,Gerai Cirebon 14,Bandung,Jawa Barat,Flagship,YA
+STR-15,Gerai Magelang 15,Magelang,Jawa Tengah-DIY,Flagship,YA
+STR-16,Gerai Malang 16,Malang,Jawa Timur,Express,YA
+STR-17,Gerai Padang 17,Medan,Sumatera,Express,YA
+STR-18,Gerai Denpasar 18,Makassar,Indonesia Timur,Reguler,YA
+STR-19,Gerai Jakarta Pusat 19,Depok,Jabodetabek,Flagship,TIDAK
+STR-20,Gerai Bandung 20,Bogor,Jawa Barat,Flagship,YA
+STR-21,Gerai Solo 21,Salatiga,Jawa Tengah-DIY,Flagship,YA
+STR-22,Gerai Kediri 22,Surabaya,Jawa Timur,Express,YA
+STR-23,Gerai Medan 23,Padang,Sumatera,Flagship,YA
+STR-24,Gerai Makassar 24,Mataram,Indonesia Timur,Community,YA

@@ -50,17 +50,37 @@ QUERIES: dict[str, list[tuple[str, str]]] = {
         ("prakiraan_cuaca", "SELECT count(*) FILTER (WHERE epoch(strptime(local_datetime, '%Y-%m-%d %H:%M:%S')) - epoch(strptime(utc_datetime, '%Y-%m-%d %H:%M:%S')) = 25200) AS baris_selisih_7jam, count(*) AS baris FROM read_csv_auto('{D}/prakiraan_cuaca.csv', all_varchar=true)"),
         ("desa", "SELECT count(*) AS desa, count(DISTINCT kecamatan) AS kecamatan FROM read_csv_auto('{D}/desa.csv', all_varchar=true)"),
     ],
+    # T4 (Sesi 12–15) — delapan berkas, satu dataset penuh. Lima temuan wajib malam itu ada di sini:
+    # waktu (UTC vs WIB), identitas (email dipakai dua customer_id), duplikat, yatim, dan qty negatif.
+    "t4": [
+        ("orders", "SELECT count(*) AS baris, count(DISTINCT order_id) AS id_unik FROM read_csv_auto('{D}/orders.csv', all_varchar=true)"),
+        ("orders", "SELECT count(*) AS id_duplikat FROM (SELECT order_id FROM read_csv_auto('{D}/orders.csv', all_varchar=true) GROUP BY 1 HAVING count(*) > 1)"),
+        ("orders", "SELECT count(*) FILTER (WHERE order_ts LIKE '%Z') AS timestamp_utc, count(*) FILTER (WHERE order_ts NOT LIKE '%Z') AS timestamp_wib, count(DISTINCT status) AS varian_status FROM read_csv_auto('{D}/orders.csv', all_varchar=true)"),
+        ("orders", "SELECT store_id, substr(order_ts, 1, 10) AS tanggal, count(*) AS baris, count(DISTINCT order_id) AS order_unik, count(*) - count(DISTINCT order_id) AS kelebihan FROM read_csv_auto('{D}/orders.csv', all_varchar=true) WHERE store_id <> '' GROUP BY 1, 2 HAVING count(*) > count(DISTINCT order_id) ORDER BY kelebihan DESC, baris DESC LIMIT 5"),
+        ("order_items", "SELECT count(*) FILTER (WHERE TRY_CAST(qty AS INTEGER) < 0) AS qty_negatif, count(*) AS baris FROM read_csv_auto('{D}/order_items.csv', all_varchar=true)"),
+        ("order_items", "SELECT count(*) AS fk_yatim FROM read_csv_auto('{D}/order_items.csv', all_varchar=true) i WHERE NOT EXISTS (SELECT 1 FROM read_csv_auto('{D}/orders.csv', all_varchar=true) o WHERE o.order_id = i.order_id)"),
+        ("customers", "SELECT count(*) AS email_dipakai_dua_id FROM (SELECT email FROM read_csv_auto('{D}/customers.csv', all_varchar=true) WHERE email <> '' GROUP BY 1 HAVING count(DISTINCT customer_id) > 1)"),
+        ("customers", "SELECT count(*) FILTER (WHERE handle IS NULL OR handle = '') AS handle_kosong, count(DISTINCT wilayah) AS varian_wilayah FROM read_csv_auto('{D}/customers.csv', all_varchar=true)"),
+        ("targets", "SELECT count(*) FILTER (WHERE target_revenue IS NULL OR target_revenue = '') AS target_kosong, count(*) AS baris FROM read_csv_auto('{D}/targets.csv', all_varchar=true)"),
+        ("stores", "SELECT count(*) FILTER (WHERE upper(aktif) <> 'YA') AS toko_tutup, count(DISTINCT wilayah) AS varian_wilayah FROM read_csv_auto('{D}/stores.csv', all_varchar=true)"),
+        ("products", "SELECT count(*) AS baris, count(DISTINCT product_id) AS produk_unik, count(*) - count(DISTINCT product_id) AS versi_harga_ekstra FROM read_csv_auto('{D}/products.csv', all_varchar=true)"),
+        ("returns", "SELECT count(*) AS baris, count(DISTINCT reason) AS varian_alasan, count(DISTINCT return_channel) AS varian_channel FROM read_csv_auto('{D}/returns.csv', all_varchar=true)"),
+    ],
 }
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--topic", required=True, choices=sorted(config.TOPICS))
-    ap.add_argument("--slice", required=True)
+    ap.add_argument("--slice", default=None,
+                    help="wajib untuk T1–T3; T4 tidak punya slice (satu dataset untuk semua tim)")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args()
 
-    ctx = config.resolve(args.topic, args.slice)
+    # T1–T3: kalau --slice tidak disebut, pakai slice pertama seperti checkpoint.py.
+    slice_id = args.slice or (config.slice_ids(args.topic) or [None])[0]
+    ctx = config.resolve(args.topic, slice_id)
+    suffix = f"_{slice_id}" if slice_id else ""
     con = duckdb.connect()
     out = []
     for tabel, sql in QUERIES[args.topic]:
@@ -72,7 +92,9 @@ def main() -> None:
         print(json.dumps(out, indent=2, ensure_ascii=False))
         return
 
-    print(f"# Profil {ctx['cfg']['label']} — slice {args.slice} ({ctx['label']})\n")
+    judul = f"# Profil {ctx['cfg']['label']} — slice {slice_id} ({ctx['label']})\n" if slice_id \
+        else f"# Profil {ctx['cfg']['label']} — dataset penuh\n"
+    print(judul)
     for blok in out:
         print(f"## {blok['tabel']}")
         print("   " + textwrap.shorten(blok["query"], 160, placeholder=" …"))
@@ -80,9 +102,9 @@ def main() -> None:
             print("   " + " | ".join(f"{c}={v}" for c, v in zip(blok["kolom"], r)))
         print()
     os.makedirs(config.DOCS, exist_ok=True)
-    dest = os.path.join(config.DOCS, f"profile_{args.topic}_{args.slice}.md")
+    dest = os.path.join(config.DOCS, f"profile_{args.topic}{suffix}.md")
     with open(dest, "w", encoding="utf-8") as fh:
-        fh.write(f"# Profil sumber — {ctx['cfg']['label']} / {args.slice}\n\n")
+        fh.write(f"# Profil sumber — {ctx['cfg']['label']}" + (f" / {slice_id}\n\n" if slice_id else "\n\n"))
         for blok in out:
             fh.write(f"## {blok['tabel']}\n\n`{blok['query']}`\n\n")
             fh.write("| " + " | ".join(blok["kolom"]) + " |\n")
