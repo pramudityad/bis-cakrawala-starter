@@ -9,7 +9,7 @@
 --   pred_anomaly_daily  membaca fact, jadi ia paling akhir
 --
 -- Loader membaca baris SOURCE di berkas ini dan menyisipkan isi berkasnya (DuckDB Python tidak
--- bisa menjalankan SOURCE sendiri). Kalau ada satu penanda TODO di berkas mana pun di bawah ini,
+-- bisa menjalankan SOURCE sendiri). Kalau ada satu penanda pekerjaan-belum-selesai di berkas mana pun di bawah ini,
 -- loader menolak jalan — itu memang tujuannya.
 -- ============================================================
 

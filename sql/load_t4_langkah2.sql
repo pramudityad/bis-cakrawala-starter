@@ -7,7 +7,7 @@
 -- Isinya = seluruh langkah 1, ditambah tabel target dan view KPI. Karena semuanya
 -- CREATE OR REPLACE, menjalankan ulang seluruh rantai tetap idempoten dan hasilnya sama.
 --
--- Kenapa berkas terpisah per langkah: gerbang TODO memeriksa SELURUH berkas yang ikut terbaca.
+-- Kenapa berkas terpisah per langkah: gerbang pekerjaan-belum-selesai memeriksa SELURUH berkas yang ikut terbaca.
 -- Kalau langkah 2 dan 3 ikut di sini, malam Sesi 12 tidak akan bisa load — padahal bagian itu
 -- memang belum kamu kerjakan. Berkas per langkah membuat tiap malam punya satu perintah yang jelas.
 -- ============================================================
