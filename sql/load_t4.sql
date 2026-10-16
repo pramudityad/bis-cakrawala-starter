@@ -6,3 +6,5 @@ SOURCE sql/00_stg_returns.sql;
 SOURCE sql/20_dim_channel.sql;
 SOURCE sql/20_dim_product.sql;
 SOURCE sql/10_dim_date.sql;
+SOURCE sql/00_stg_orders.sql;
+SOURCE sql/00_stg_order_items.sql;
