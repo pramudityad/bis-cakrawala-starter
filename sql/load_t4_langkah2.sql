@@ -4,3 +4,4 @@
 SOURCE sql/load_t4.sql;
 SOURCE sql/20_dim_target.sql;
 SOURCE sql/21_fact_target.sql;
+SOURCE sql/30_v_kpi_monthly.sql;
