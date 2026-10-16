@@ -1,30 +1,37 @@
--- ============================================================
--- 31_v_revenue_bridge.sql — Sesi 14, langkah 3b. Bagianmu.
---
--- Mengeser "targetnya meleset" jadi "kenapa meleset". Selisih omzet dipecah jadi tiga sebab:
---
---     volume_effect : jumlah unit berubah, harga tetap
---     price_effect  : harga berubah, jumlah unit tetap
---     mix_effect    : komposisi produk berubah (yang mahal laku lebih sedikit daripada yang murah)
---
--- Ketiganya harus berjumlah tepat sama dengan selisih omzet yang dijelaskan. Kalau tidak jumlahnya
--- pas, bukan berarti "hampir benar" — artinya salah satu efeknya salah hitung.
---
--- Kolomnya sudah ditetapkan dan tidak boleh ditambah:
---     v_revenue_bridge(bulan, channel, volume_effect, price_effect, mix_effect)
--- Grain: satu baris = satu bulan, satu channel (wilayah dijumlahkan).
---
--- SATU KEPUTUSAN YANG HARUS DIAMBIL SEBELUM MENULIS (dan ini pertanyaan dosen di kelas):
---   pembandingnya bulan sebelumnya atau bulan yang sama tahun lalu? Untuk dataset ini yang
---   tersedia hanya Jan–Des 2025, jadi bulan sebelumnya untuk Feb–Des, dan baris Januari tidak punya
---   pembanding. Buat keputusanmu, tulis di bawah, dan pakai konsisten.
---
--- TODO: tulis view-nya, tulis keputusan pembandingmu, lalu HAPUS kata TODO ini.
---       Pembanding: ______________________________________________________
-SELECT
-    CAST(NULL AS VARCHAR) AS bulan, CAST(NULL AS VARCHAR) AS channel,
-    CAST(NULL AS DOUBLE) AS volume_effect, CAST(NULL AS DOUBLE) AS price_effect,
-    CAST(NULL AS DOUBLE) AS mix_effect
-WHERE FALSE;
+-- KEADAAN SELESAI (tag aman). Diambil dari reference-sql dosen.
+-- Dipakai kalau kamu harus menarik tag langkah ini: `git checkout <tag>`.
+-- Setelah menariknya, tetap tulis satu baris apa yang kamu lewati.
 
--- Bukti yang harus hijau di Cek 3b: jumlah tiga efek = selisih omzet bulan itu vs pembandingnya.
+CREATE OR REPLACE VIEW v_revenue_bridge AS
+WITH bulanan AS (
+    SELECT substr(CAST(f.order_ts AS VARCHAR), 1, 7) AS bulan,
+           c.channel,
+           sum(f.qty)          AS qty,
+           sum(f.neto)         AS omzet,
+           sum(f.neto) / NULLIF(sum(f.qty), 0) AS harga_rata2
+    FROM fact_order_line f
+    JOIN dim_channel c ON c.channel_sk = f.channel_sk
+    GROUP BY 1, 2
+),
+banding AS (
+    SELECT *,
+           lag(bulan)  OVER (PARTITION BY channel ORDER BY bulan) AS bulan_lalu,
+           lag(qty)    OVER (PARTITION BY channel ORDER BY bulan) AS qty_lalu,
+           lag(omzet)  OVER (PARTITION BY channel ORDER BY bulan) AS omzet_lalu,
+           lag(harga_rata2) OVER (PARTITION BY channel ORDER BY bulan) AS harga_lalu
+    FROM bulanan
+)
+SELECT bulan,
+       channel,
+       
+       (qty - qty_lalu) * harga_lalu                        AS volume_effect,
+       
+       (harga_rata2 - harga_lalu) * qty_lalu                AS price_effect,
+       
+       
+       
+       (omzet - omzet_lalu)
+         - ((qty - qty_lalu) * harga_lalu)
+         - ((harga_rata2 - harga_lalu) * qty_lalu)         AS mix_effect
+FROM banding
+WHERE bulan_lalu IS NOT NULL;

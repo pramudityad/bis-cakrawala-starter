@@ -2,3 +2,4 @@
 -- Jalankan: python -m pipeline.load --topic t4 --twice --sql sql/load_t4_langkah3.sql
 
 SOURCE sql/load_t4_langkah2.sql;
+SOURCE sql/31_v_revenue_bridge.sql;
