@@ -41,9 +41,12 @@ import duckdb
 
 from pipeline import config
 
-# `SOURCE sql/x.sql;` (gaya CLI DuckDB) atau `-- include: sql/x.sql`
-INCLUDE_RE = re.compile(r"^[ \t]*(?:SOURCE|\.read|--[ \t]*include:)[ \t]+(\S+?)[ \t]*;?[ \t]*$",
-                        re.I | re.M)
+# `SOURCE sql/x.sql;` (gaya CLI DuckDB) atau `-- include: sql/x.sql`.
+# Komentar di ujung baris diizinkan — `SOURCE sql/x.sql;   -- DIBERIKAN` itu wajar ditulis orang,
+# dan kalau tidak diizinkan barisnya lolos ke DuckDB lalu meledak sebagai Parser Error.
+INCLUDE_RE = re.compile(
+    r"^[ \t]*(?:SOURCE|\.read|--[ \t]*include:)[ \t]+(\S+?)[ \t]*;?[ \t]*(?:--[^\n]*)?$",
+    re.I | re.M)
 
 
 def render(sql: str, ctx: dict) -> str:
