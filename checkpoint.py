@@ -452,8 +452,12 @@ def sesi14(topic: str, step: str) -> list[bool]:
                        and not re.match(r"^\s*\|[\s|:-]+\|\s*$", b)]
         hasil.append(tunjukkan("ada baris diagnosis terisi (tabel atau kalimat)", len(baris_tabel) + len(kalimat) >= 3,
                                f"{len(baris_tabel)} baris tabel · {len(kalimat)} kalimat"))
+        # Verdict-nya ditulis di dalam tabel, jadi pencariannya harus ikut baris tabel —
+        # yang dibuang hanya baris petunjuk `>` dan judul, yang memang ada di templat.
+        tanpa_petunjuk = "\n".join(b for b in dok.splitlines()
+                                   if b.strip() and not b.strip().startswith((">", "#")))
         hasil.append(tunjukkan("menyebut jenis harinya (data / bisnis / kampanye)",
-                               bool(re.search(r"anomali data|anomali bisnis|kampanye", isi, re.I))))
+                               bool(re.search(r"anomali data|anomali bisnis|kampanye", tanpa_petunjuk, re.I))))
         con2, _, _ = buka_t4(topic)
         if con2 is not None and "pred_anomaly_daily" in _tabel(con2):
             n_nyala = _satu(con2, "SELECT count(DISTINCT tanggal) FROM pred_anomaly_daily WHERE anomaly_flag")
