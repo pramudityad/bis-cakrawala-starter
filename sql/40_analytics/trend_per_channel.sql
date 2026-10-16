@@ -12,7 +12,7 @@ SELECT
     date_trunc('week', f.order_ts) AS awal_pekan,
     c.channel,
     sum(f.neto)                    AS omzet,
-    count(DISTINCT f.order_id)     AS pesanan
+    count(DISTINCT f.order_id_degenerate)     AS pesanan
 FROM fact_order_line f
 JOIN dim_channel c ON c.channel_sk = f.channel_sk
 GROUP BY 1, 2

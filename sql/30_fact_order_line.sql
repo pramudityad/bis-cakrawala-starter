@@ -7,7 +7,9 @@
 -- Konsekuensi grain itu, dan inilah yang dinilai:
 --   * Kunci dimensi diambil dari versi yang BERLAKU SAAT pesanan terjadi, bukan versi hari ini.
 --     Untuk dim_product artinya syarat tanggal ikut di ON (lihat 20_dim_product.sql).
---   * `order_id` tidak punya dimensi sendiri. Ia tetap ditulis di fact dan diberi label degenerate.
+--   * `order_id` dan `item_id` tidak punya dimensi sendiri. Keduanya tetap ditulis di fact dan
+--     diberi label degenerate. `item_id` bukan hiasan: `return_rate` di Sesi 13 menyambung
+--     `returns.csv` ke fact lewat kolom itu — retur menunjuk item, bukan pesanan.
 --   * Measure diberi label aditivitas di komentar: qty, diskon, neto = ADDITIVE;
 --     harga_satuan = NON-ADDITIVE.
 --

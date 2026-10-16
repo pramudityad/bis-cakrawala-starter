@@ -32,6 +32,13 @@ DOSEN_OWNED = [
     "tests/run_tests.py",
     "sql/00_profiling.sql",
     "sql/10_dim_date.sql",
+    # T4 (Sesi 12–15): hanya berkas yang SEPENUHNYA diberikan. Kerangka yang masih berisi TODO
+    # tidak pernah ikut di sini — setelah Sesi 12 berkas itu jadi pekerjaanmu, dan `--update`
+    # tidak boleh menimpanya.
+    "sql/00_stg_returns.sql",
+    "sql/20_dim_channel.sql",
+    "sql/20_dim_product.sql",
+    "sql/40_analytics/trend_per_channel.sql",
     "models/",
     "notebooks/",
 ]

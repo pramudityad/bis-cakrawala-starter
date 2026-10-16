@@ -43,6 +43,12 @@ FROM harian;
 
 -- Bukti yang harus hijau di Cek 1d:
 --   SELECT count(*) FILTER (WHERE zscore IS NULL) FROM pred_anomaly_daily;   -- harus 0
+--   SELECT channel, count(*) FROM pred_anomaly_daily GROUP BY 1;             -- 337 per channel
 --   SELECT count(*) FILTER (WHERE anomaly_flag) FROM pred_anomaly_daily;     -- bukan 0, bukan semua
 --   SELECT tanggal FROM pred_anomaly_daily WHERE anomaly_flag ORDER BY 1;    -- kamu harus bisa
 --                                                                            -- menjelaskan tiap tanggal
+--
+-- Catatan soal 337: setahun ada 365 hari, dan 28 hari pertama tiap channel tidak punya riwayat
+-- penuh untuk dijadikan pembanding. Hari seperti itu jangan diskor dengan jendela kosong — buang
+-- (lalu baris pertama tabelmu 29 Januari), atau biarkan dan jelaskan. Kalau kamu biarkan dengan
+-- jendela 1–2 hari, penandanya akan menyala di hari-hari awal Januari yang sebenarnya biasa saja.

@@ -22,6 +22,45 @@ Semua perintah **offline** — data seed sudah ada di `data/raw/`, tidak ada und
 | **T1** Kampus: Presensi & Kelulusan | `data/raw/t1_kampus/` | `--slice k4` (angkatan 2024) · `k5` (2023) · `k7` (2022) |
 | **T2** POS UMKM Multi-Outlet | `data/raw/t2_umkm/` | `--slice k8` (outlet A+B+C, 12 bulan) · `k9` (outlet A, 6 bulan, scope −20%) |
 | **T3** Cuaca Ekstrem per Desa (BMKG) | `data/raw/t3_publik/<slice>/` | `--slice k1` Kota Bogor · `k2` Kota Semarang · `k3` Kota Makassar · `k6` Kota Denpasar |
+| **T4** Ritel Omnichannel (Sesi 12–15) | `data/raw/t4_omni/` | **tidak ada slice** — satu dataset untuk seluruh kelas |
+
+## T4 — satu proyek, empat langkah (Sesi 12–15)
+
+Mulai Sesi 12 kamu mengerjakan **satu proyek**, bukan latihan terpisah per pertemuan: satu dataset,
+satu stakeholder (Head of Omnichannel Retail), satu pertanyaan, empat langkah yang saling menopang.
+
+> "Which channel drives our target miss this quarter, and what should we do about it?"
+
+| Langkah | Sesi | Yang kamu bangun |
+|---|---|---|
+| 1 · fondasi | 12 | profil, bersihkan, bintang, `fact_order_line`, `pred_anomaly_daily` |
+| 2 · KPI & target | 13 | `dim_target`, `fact_target`, `v_kpi_monthly`, kamus metrik, D12 |
+| 3 · dashboard & diagnosis | 14 | dashboard Metabase (maks 4 tile), `v_revenue_bridge` |
+| 4 · insight | 15 | `docs/insights_s15.md`, tag `s15-final` |
+
+```bash
+# Sesi 12
+python -m pipeline.profile --topic t4                  # tulis docs/profile_t4.md
+python -m pipeline.load    --topic t4 --twice          # T4 tidak pakai --slice
+python checkpoint.py verify --sesi 12 --step 1         # lalu step 2, 3, 4
+
+# Sesi 13 dan 14 memakai berkas urutan yang berbeda (lihat warehouse/README.md)
+python -m pipeline.load --topic t4 --twice --sql sql/load_t4_langkah2.sql
+python checkpoint.py verify --sesi 13 --step 2
+python -m pipeline.load --topic t4 --twice --sql sql/load_t4_langkah3.sql
+python checkpoint.py verify --sesi 14 --step 3b
+python checkpoint.py verify --sesi 15 --step 1
+```
+
+**Aturan yang berlaku sepanjang empat langkah.** Kamu bekerja di branch `<nim>` sendiri. Tiap
+langkah berakhir dengan **tag aman** (`s12-step1a-ok` … `s15-final`). Kalau waktumu habis dan
+`checkpoint` masih merah: tarik tag langkah sebelumnya (`git checkout s12-step1b-ok`), tulis satu
+baris apa yang kamu lewati, lalu ikut langkah berikutnya — **jangan berhenti**. Yang dinilai adalah
+penjelasanmu di pembelaan, bukan kecepatanmu.
+
+`warehouse/fallback/t4.duckdb` adalah T4 yang sudah jadi untuk keadaan darurat. Kalau kamu memakainya,
+katakan terus terang ke dosen: itu menggantikan artefakmu, dan tidak bisa diklaim sebagai kerja
+sendiri.
 
 ## Struktur
 
