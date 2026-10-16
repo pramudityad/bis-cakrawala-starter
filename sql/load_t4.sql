@@ -11,3 +11,4 @@ SOURCE sql/00_stg_order_items.sql;
 SOURCE sql/20_dim_store.sql;
 SOURCE sql/20_dim_customer.sql;
 SOURCE sql/30_fact_order_line.sql;
+SOURCE sql/40_analytics/pred_anomaly_daily.sql;
